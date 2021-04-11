@@ -13,6 +13,11 @@ const winningCombinations = [
   [2, 4, 6],
 ];
 
+const colors = {
+  X: "#6699CC",
+  O: "#F99157",
+};
+
 const tiles = [];
 const computerPlayer = "X";
 let currentPlayer = "X";
@@ -21,6 +26,7 @@ infoElement.innerText = `Turn: ${currentPlayer}`;
 resetButtonElement.addEventListener("click", () => {
   tiles.forEach((tile) => {
     tile.innerText = "";
+    tile.disabled = false;
   });
   currentPlayer = "X";
   infoElement.innerText = `Turn: ${currentPlayer}`;
@@ -45,23 +51,24 @@ const checkWinner = (state) => {
 };
 
 const markTile = (tile, player) => {
-  if (tile.innerText === "") {
-    tile.innerText = player;
+  tile.innerText = player;
+  tile.style.color = colors[player];
+  tile.disabled = true;
 
-    const winner = checkWinner(tiles.map((tile) => tile.innerText));
+  const winner = checkWinner(tiles.map((tile) => tile.innerText));
 
-    if (winner) {
-      infoElement.innerText =
-        winner === "draw" ? "It's a draw!" : `${winner} wins!`;
-      return;
-    }
+  if (winner) {
+    infoElement.innerText =
+      winner === "draw" ? "IT'S A DRAW" : `${winner} WINS!`;
+    tiles.forEach((tile) => (tile.disabled = true));
+    return;
+  }
 
-    currentPlayer = player === "X" ? "O" : "X";
-    infoElement.innerText = `Turn: ${currentPlayer}`;
+  currentPlayer = player === "X" ? "O" : "X";
+  infoElement.innerText = `TURN: ${currentPlayer}`;
 
-    if (currentPlayer === computerPlayer) {
-      makeComputerPlay();
-    }
+  if (currentPlayer === computerPlayer) {
+    makeComputerPlay();
   }
 };
 
