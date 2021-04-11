@@ -18,10 +18,12 @@ const colors = {
   O: "#F99157",
 };
 
+const switchPlayer = (player) => (player === "X" ? "O" : "X");
+
 const tiles = [];
-const computerPlayer = "X";
+let computerPlayer = "X";
 let currentPlayer = "X";
-infoElement.innerText = `Turn: ${currentPlayer}`;
+infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
 
 resetButtonElement.addEventListener("click", () => {
   tiles.forEach((tile) => {
@@ -29,8 +31,11 @@ resetButtonElement.addEventListener("click", () => {
     tile.disabled = false;
   });
   currentPlayer = "X";
-  infoElement.innerText = `Turn: ${currentPlayer}`;
-  makeComputerPlay();
+  computerPlayer = switchPlayer(computerPlayer);
+  infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
+  if (currentPlayer === computerPlayer) {
+    makeComputerPlay();
+  }
 });
 
 const isWin = (state, player) => {
@@ -58,17 +63,20 @@ const markTile = (tile, player) => {
   const winner = checkWinner(tiles.map((tile) => tile.innerText));
 
   if (winner) {
-    infoElement.innerText =
-      winner === "draw" ? "IT'S A DRAW" : `${winner} WINS!`;
+    if (winner === computerPlayer) {
+      infoElement.innerText = "COMPUTER WINS!";
+    } else if (winner === "draw") {
+      infoElement.innerText = "IT'S A DRAW!";
+    } else {
+      infoElement.innerText = "YOU WIN!";
+    }
+
     tiles.forEach((tile) => (tile.disabled = true));
-    return;
-  }
-
-  currentPlayer = player === "X" ? "O" : "X";
-  infoElement.innerText = `TURN: ${currentPlayer}`;
-
-  if (currentPlayer === computerPlayer) {
-    makeComputerPlay();
+  } else {
+    currentPlayer = switchPlayer(player);
+    if (currentPlayer === computerPlayer) {
+      makeComputerPlay();
+    }
   }
 };
 
@@ -80,13 +88,18 @@ const markTile = (tile, player) => {
   boardElement.appendChild(tile);
 });
 
-const scores = { X: 100, O: -100, draw: 0 };
+const getScore = (winner, depth) => {
+  let score = 0 - depth;
+  if (winner === switchPlayer(computerPlayer)) score = -100 + depth;
+  if (winner === computerPlayer) score = 100 - depth;
+  return score;
+};
 
 const minimax = (state, depth, max) => {
   let score;
   const winner = checkWinner(state);
   if (winner !== undefined) {
-    score = scores[winner] - depth;
+    score = getScore(winner, depth);
     return score;
   }
 
@@ -106,7 +119,7 @@ const minimax = (state, depth, max) => {
     state.forEach((item, index) => {
       if (item === "") {
         const newState = [...state];
-        newState[index] = "O";
+        newState[index] = switchPlayer(computerPlayer);
         const score = minimax(newState, depth + 1, true);
         bestScore = Math.min(score, bestScore);
       }

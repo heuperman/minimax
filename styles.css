@@ -15,12 +15,12 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 48px;
+  margin: 48px 0;
 }
 
 h1 {
   font-weight: 200;
-  margin: 48px 0;
+  margin: 0;
 }
 
 button {
@@ -43,6 +43,7 @@ button {
   width: 244px;
   height: 244px;
   background-color: #333;
+  margin-bottom: 36px;
 }
 
 #reset-button {
@@ -50,11 +51,10 @@ button {
   font-size: 2em;
   border-bottom: 1px solid #f2777a;
   color: #f2777a;
-  margin-top: 96px;
 }
 
 #info {
-  margin: 0 0 48px;
+  margin-bottom: 36px;
 }
 
 .tile {
