@@ -13,24 +13,32 @@ const winningCombinations = [
   [2, 4, 6],
 ];
 
-const colors = {
-  X: "#6699CC",
-  O: "#F99157",
+const players = {
+  one: "X",
+  two: "O",
 };
 
-const switchPlayer = (player) => (player === "X" ? "O" : "X");
+const colors = {
+  [players.one]: "#6699CC",
+  [players.two]: "#F99157",
+};
+
+const emptyTile = "";
+
+const switchPlayer = (player) =>
+  player === players.one ? players.two : players.one;
 
 const tiles = [];
-let computerPlayer = "X";
-let currentPlayer = "X";
+let computerPlayer = players.one;
+let currentPlayer = players.one;
 infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
 
 resetButtonElement.addEventListener("click", () => {
   tiles.forEach((tile) => {
-    tile.innerText = "";
+    tile.innerText = emptyTile;
     tile.disabled = false;
   });
-  currentPlayer = "X";
+  currentPlayer = players.one;
   computerPlayer = switchPlayer(computerPlayer);
   infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
   if (currentPlayer === computerPlayer) {
@@ -46,12 +54,12 @@ const isWin = (state, player) => {
 };
 
 const isDraw = (state) => {
-  return !state.some((item) => item === "");
+  return !state.some((item) => item === emptyTile);
 };
 
 const checkWinner = (state) => {
-  if (isWin(state, "X")) return "X";
-  if (isWin(state, "O")) return "O";
+  if (isWin(state, players.one)) return players.one;
+  if (isWin(state, players.two)) return players.two;
   if (isDraw(state)) return "draw";
 };
 
@@ -63,20 +71,14 @@ const markTile = (tile, player) => {
   const winner = checkWinner(tiles.map((tile) => tile.innerText));
 
   if (winner) {
-    if (winner === computerPlayer) {
-      infoElement.innerText = "COMPUTER WINS!";
-    } else if (winner === "draw") {
-      infoElement.innerText = "IT'S A DRAW!";
-    } else {
-      infoElement.innerText = "YOU WIN!";
-    }
+    let text = winner === "draw" ? "IT'S A DRAW!" : "YOU WIN!";
+    if (winner === computerPlayer) text = "COMPUTER WINS!";
+    infoElement.innerText = text;
 
     tiles.forEach((tile) => (tile.disabled = true));
   } else {
     currentPlayer = switchPlayer(player);
-    if (currentPlayer === computerPlayer) {
-      makeComputerPlay();
-    }
+    if (currentPlayer === computerPlayer) makeComputerPlay();
   }
 };
 
@@ -103,29 +105,16 @@ const minimax = (state, depth, max) => {
     return score;
   }
 
-  if (max) {
-    let bestScore = -Infinity;
-    state.forEach((item, index) => {
-      if (item === "") {
-        const newState = [...state];
-        newState[index] = computerPlayer;
-        const score = minimax(newState, depth + 1, false);
-        bestScore = Math.max(score, bestScore);
-      }
-    });
-    return bestScore;
-  } else {
-    let bestScore = Infinity;
-    state.forEach((item, index) => {
-      if (item === "") {
-        const newState = [...state];
-        newState[index] = switchPlayer(computerPlayer);
-        const score = minimax(newState, depth + 1, true);
-        bestScore = Math.min(score, bestScore);
-      }
-    });
-    return bestScore;
-  }
+  let bestScore = max ? -Infinity : Infinity;
+  state.forEach((item, index) => {
+    if (item === emptyTile) {
+      const newState = [...state];
+      newState[index] = max ? computerPlayer : switchPlayer(computerPlayer);
+      const score = minimax(newState, depth + 1, !max);
+      bestScore = max ? Math.max(score, bestScore) : Math.min(score, bestScore);
+    }
+  });
+  return bestScore;
 };
 
 const getBestMove = () => {
@@ -133,7 +122,7 @@ const getBestMove = () => {
   let bestMove;
   const state = tiles.map((tile) => tile.innerText);
   state.forEach((item, index) => {
-    if (item === "") {
+    if (item === emptyTile) {
       const newState = [...state];
       newState[index] = computerPlayer;
       const score = minimax(newState, 0, false);
