@@ -97,7 +97,7 @@ const getScore = (winner, depth) => {
   return score;
 };
 
-const minimax = (state, depth, max) => {
+const minimax = (state, depth, alpha, beta, max) => {
   let score;
   const winner = checkWinner(state);
   if (winner !== undefined) {
@@ -106,14 +106,18 @@ const minimax = (state, depth, max) => {
   }
 
   let bestScore = max ? -Infinity : Infinity;
-  state.forEach((item, index) => {
+  for (const [index, item] of state.entries()) {
     if (item === emptyTile) {
       const newState = [...state];
       newState[index] = max ? computerPlayer : switchPlayer(computerPlayer);
-      const score = minimax(newState, depth + 1, !max);
+      const score = minimax(newState, depth + 1, alpha, beta, !max);
       bestScore = max ? Math.max(score, bestScore) : Math.min(score, bestScore);
+
+      if (max) alpha = Math.max(alpha, score);
+      if (!max) beta = Math.min(beta, score);
+      if (beta <= alpha) break;
     }
-  });
+  }
   return bestScore;
 };
 
@@ -125,7 +129,7 @@ const getBestMove = () => {
     if (item === emptyTile) {
       const newState = [...state];
       newState[index] = computerPlayer;
-      const score = minimax(newState, 0, false);
+      const score = minimax(newState, 0, -Infinity, Infinity, false);
       if (score > bestScore) {
         bestScore = score;
         bestMove = index;
