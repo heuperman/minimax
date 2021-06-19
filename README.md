@@ -2,6 +2,8 @@
 
 A Tic-Tac-Toe game where you play against the computer.
 
+![Example gameplay](https://user-images.githubusercontent.com/38754228/122638830-59a96680-d0ee-11eb-9476-8df0790e3688.gif)
+
 ## How to get started
 
 You can [play it online](https://heuperman.github.io/minimax/).
