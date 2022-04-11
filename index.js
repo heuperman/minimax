@@ -1,6 +1,7 @@
 const boardElement = document.getElementById("board");
 const infoElement = document.getElementById("info");
 const resetButtonElement = document.getElementById("reset-button");
+const faviconElement = document.getElementById("favicon");
 
 const winningCombinations = [
   [0, 1, 2],
@@ -28,10 +29,15 @@ const emptyTile = "";
 const switchPlayer = (player) =>
   player === players.one ? players.two : players.one;
 
+const setFavicon = (symbol) => {
+  faviconElement.href = `favicon-${symbol}.png`;
+};
+
 const tiles = [];
 let computerPlayer = players.one;
 let currentPlayer = players.one;
 infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
+setFavicon(switchPlayer(computerPlayer).toLowerCase());
 
 resetButtonElement.addEventListener("click", () => {
   tiles.forEach((tile) => {
@@ -40,6 +46,7 @@ resetButtonElement.addEventListener("click", () => {
   });
   currentPlayer = players.one;
   computerPlayer = switchPlayer(computerPlayer);
+  setFavicon(switchPlayer(computerPlayer).toLowerCase());
   infoElement.innerText = `YOU ARE ${switchPlayer(computerPlayer)}`;
   if (currentPlayer === computerPlayer) {
     makeComputerPlay();
