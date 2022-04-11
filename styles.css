@@ -53,6 +53,12 @@ button {
   color: #f2777a;
 }
 
+#reset-button:focus-visible {
+  outline: 1px solid #f2777a;
+  padding: 0 8px 0 8px;
+  border: none;
+}
+
 #info {
   margin-bottom: 36px;
 }
@@ -60,4 +66,14 @@ button {
 .tile {
   height: 80px;
   width: 80px;
+}
+
+.tile:focus-visible {
+  background: repeating-linear-gradient(
+    45deg,
+    #f2777a,
+    #f2777a 1px,
+    #ebebeb 1px,
+    #ebebeb 6px
+  );
 }
